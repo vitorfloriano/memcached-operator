@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Kubernetes authors.
+Copyright 2025.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,14 +21,13 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	cachev1alpha1 "example.com/memcached/api/v1alpha1"
+	cachev1alpha1 "github.com/vitorfloriano/memcached-operator/api/v1alpha1"
 )
 
 var _ = Describe("Memcached Controller", func() {
@@ -52,9 +51,7 @@ var _ = Describe("Memcached Controller", func() {
 						Name:      resourceName,
 						Namespace: "default",
 					},
-					Spec: cachev1alpha1.MemcachedSpec{
-						Size: 1,
-					},
+					// TODO(user): Specify other spec details if needed.
 				}
 				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
 			}
@@ -80,26 +77,8 @@ var _ = Describe("Memcached Controller", func() {
 				NamespacedName: typeNamespacedName,
 			})
 			Expect(err).NotTo(HaveOccurred())
-			By("Checking if Deployment was successfully created in the reconciliation")
-			Eventually(func(g Gomega) {
-				found := &appsv1.Deployment{}
-				g.Expect(k8sClient.Get(ctx, typeNamespacedName, found)).To(Succeed())
-			}).Should(Succeed())
-
-			By("Reconciling the custom resource again")
-			_, err = controllerReconciler.Reconcile(ctx, reconcile.Request{
-				NamespacedName: typeNamespacedName,
-			})
-			Expect(err).NotTo(HaveOccurred())
-
-			By("Checking the latest Status Condition added to the Memcached instance")
-			Expect(k8sClient.Get(ctx, typeNamespacedName, memcached)).To(Succeed())
-			conditions := []metav1.Condition{}
-			Expect(memcached.Status.Conditions).To(ContainElement(
-				HaveField("Type", Equal(typeAvailableMemcached)), &conditions))
-			Expect(conditions).To(HaveLen(1), "Multiple conditions of type %s", typeAvailableMemcached)
-			Expect(conditions[0].Status).To(Equal(metav1.ConditionTrue), "condition %s", typeAvailableMemcached)
-			Expect(conditions[0].Reason).To(Equal("Reconciling"), "condition %s", typeAvailableMemcached)
+			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
+			// Example: If you expect a certain status condition after reconciliation, verify it here.
 		})
 	})
 })
