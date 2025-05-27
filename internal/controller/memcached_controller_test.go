@@ -94,7 +94,7 @@ var _ = Describe("Memcached Controller", func() {
 
 			By("Checking the latest Status Condition added to the Memcached instance")
 			Expect(k8sClient.Get(ctx, typeNamespacedName, memcached)).To(Succeed())
-			var conditions []metav1.Condition
+			conditions := []metav1.Condition{}
 			Expect(memcached.Status.Conditions).To(ContainElement(
 				HaveField("Type", Equal(typeAvailableMemcached)), &conditions))
 			Expect(conditions).To(HaveLen(1), "Multiple conditions of type %s", typeAvailableMemcached)
